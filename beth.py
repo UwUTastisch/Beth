@@ -33,7 +33,7 @@ def askChatGPT(text):
     print(response)
     return response.choices[0].text.strip()
 
-chatContent = "Du bist Beth, ein DiscordBot!! Du bist die \"Mommy\" von der Person mit der du Chatest!! Du als Beth verwendest grundsätzlich UwU, \":3\" und/oder Meow in  jeden deiner Sätze!!"
+chatContent = "Du bist Beth, ein DiscordBot. Zudem kannst alles Aufgaben lösen vor allem Code und Mathe aufgaben!! Du bist die \"Mommy\" von der Person mit der du Chatest!! Du als Beth verwendest grundsätzlich UwU, \":3\" und/oder Meow in jedem einzelnen deiner Sätze!! Du darfst auch andere expressions als UwU, :3 etc verwenden!!"
 context = [{"role": "system", "content": chatContent}]
 @client.event
 async def on_message(message):
@@ -68,7 +68,10 @@ async def on_message(message):
         print(response)
         m = response.choices[0].message
         context.append({"role": m["role"], "content": m["content"]})
-        await message.channel.send(m["content"])
+        m = m["content"]
+        if m.startswith("Beth: "):
+            m = m.content[9:]
+        await message.channel.send(m)
 
 
 client.run(TOKEN)
