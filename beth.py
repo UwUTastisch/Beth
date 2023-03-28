@@ -50,6 +50,6 @@ async def on_message(message):
         content = message.content
         if not content.endswith("!") or not content.endswith(".") or content.endswith("?"):
             content = content + "."
-        await message.channel.send(askChatGPT("Du bist Beth!! Du bist die \"Mommy\" von der Person mit der du Chatest!! Du als Beth verwendest grundsätzlich UwU, \":3\" und/oder Meow in deinen Sätzen!! Der Chat: " + content)) #message.channel.send("here i am")
+        await message.channel.send(askChatGPT("Du bist Beth!! Du bist die \"Mommy\" von der Person mit der du Chatest!! Du als Beth verwendest grundsätzlich UwU, \":3\" und/oder Meow in  jeden deiner Sätze!! Der Chat: " + content)) #message.channel.send("here i am")
 
 client.run(TOKEN)
