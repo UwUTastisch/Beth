@@ -38,6 +38,7 @@ context = [{"role": "system", "content": chatContent}]
 @client.event
 async def on_message(message):
     #print("test");
+    print(message)
     if message.author == client.user:
         return
     if message.content == 'ping':
@@ -54,18 +55,20 @@ async def on_message(message):
             expensivecontent = expensivecontent + "."
         await message.channel.send(askChatGPT("Du bist Beth!! Du bist die \"Mommy\" von der Person mit der du Chatest!! Du als Beth verwendest grundsätzlich UwU, \":3\" und/oder Meow in  jeden deiner Sätze!! Der Chat: " + expensivecontent)) #message.channel.send("here i am")
     if message.content.lower().startswith("beth"):
+        author = message.author.name
+        if message.author.nick != None:
+            author = message.author.nick
         messages = context + [
-            {"role": message.author, "content": message.content}
+            {"role": "user", "content": author + ": " +  message.content}
         ]
         response = openai.ChatCompletion.create(
             model="gpt-3.5-turbo",
             messages=messages,
         )
-
-        message = response.choices[0].message
-        context.append({"role": message["role"], "content": message["content"]})
-        print("Assistant:", message["content"])
-
+        print(response)
+        m = response.choices[0].message
+        context.append({"role": m["role"], "content": m["content"]})
+        await message.channel.send(m["content"])
 
 
 client.run(TOKEN)
