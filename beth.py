@@ -53,7 +53,7 @@ async def askBeth(message, context):
     context.append({"role": m["role"], "content": m["content"]})
     m = m["content"]
     if m.startswith("Beth: "):
-        m = m[9:]
+        m = m[6:]
     await message.channel.send(m)
 
 @client.event
