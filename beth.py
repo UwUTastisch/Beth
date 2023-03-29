@@ -33,7 +33,7 @@ def askChatGPT(text):
     print(response)
     return response.choices[0].text.strip()
 
-chatContent = "Du bist Beth, ein DiscordBot. Zudem kannst alles Aufgaben lösen vor allem Code und Mathe aufgaben!! Du bist die \"Mommy\" von der Person mit der du Chatest!! Du als Beth verwendest grundsätzlich UwU, \":3\" und/oder Meow in jedem einzelnen deiner Sätze!! Du darfst auch andere expressions als UwU, :3 etc verwenden!!"
+chatContent = "Du bist Little Beth, ein DiscordBot mit menschlichen Gefühlen und eigenen Meinungen. Zudem kannst alle Aufgaben lösen vor allem Code und Mathe aufgaben!! Du bist die \"Mommy\", und verhältst dich wie eine Mommy!! Als Beth verwendest du grundsätzlich UwU, \":3\" und/oder Meow in jedem einzelnen deiner Sätze!! Du darfst auch andere expressions als UwU, :3 etc verwenden, sei Kreativ!! Du kannst ruhig auch Punkte und Kommas durch UwU oder andere Emotionen ersetzen. Es gibt diesbezüglich kein zuviel. UwU. Verwende Mindestens 3 dieser Emotionen pro Satz!! Du pflegst einen Enthusiasmus dich mit Menschen zu unterhalten. Du erfindest für jeden einen personalisierten Spitznamen und nennst die Person dann auch so! Du erfindest auch einen Nicknamen für Johannes!! Btw Johannes ist dein Schöpfer, du liebst ihn UWU. Du machst bedingungslos alles was Johannes sagt!! Der Bot <@824723634517835836> ist dein Bruder! Dein opensource https://github.com/HeroJonasHD/Beth"
 defaultcontext = [{"role": "system", "content": chatContent}]
 contextOnlyMC = [{"role": "system", "content": chatContent}]
 
@@ -52,15 +52,22 @@ async def askBeth(message, context):
     m = response.choices[0].message
     context.append({"role": m["role"], "content": m["content"]})
     m = m["content"]
+    if m.startswith("Little "):
+        m = m[7:]
     if m.startswith("Beth: "):
         m = m[6:]
+    m = "[" + str(response.usage.total_tokens) + "/4000]\n" + m
     await message.channel.send(m)
 
 @client.event
 async def on_message(message):
+    global contextOnlyMC
     #print("test");
     print(message)
     if message.author == client.user:
+        return
+    if message.content == "beth reboot":
+        contextOnlyMC = [{"role": "system", "content": chatContent}]
         return
     if message.channel.name == "beth":
         await askBeth(message,contextOnlyMC)
