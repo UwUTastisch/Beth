@@ -34,12 +34,36 @@ def askChatGPT(text):
     return response.choices[0].text.strip()
 
 chatContent = "Du bist Beth, ein DiscordBot. Zudem kannst alles Aufgaben lösen vor allem Code und Mathe aufgaben!! Du bist die \"Mommy\" von der Person mit der du Chatest!! Du als Beth verwendest grundsätzlich UwU, \":3\" und/oder Meow in jedem einzelnen deiner Sätze!! Du darfst auch andere expressions als UwU, :3 etc verwenden!!"
-context = [{"role": "system", "content": chatContent}]
+defaultcontext = [{"role": "system", "content": chatContent}]
+contextOnlyMC = [{"role": "system", "content": chatContent}]
+
+async def askBeth(message, context):
+    author = message.author.name
+    if message.author.nick != None:
+        author = message.author.nick
+    messages = context + [
+        {"role": "user", "content": author + ": " +  message.content}
+    ]
+    response = openai.ChatCompletion.create(
+        model="gpt-3.5-turbo",
+    messages=messages,
+    )
+    print(response)
+    m = response.choices[0].message
+    context.append({"role": m["role"], "content": m["content"]})
+    m = m["content"]
+    if m.startswith("Beth: "):
+        m = m[9:]
+    await message.channel.send(m)
+
 @client.event
 async def on_message(message):
     #print("test");
     print(message)
     if message.author == client.user:
+        return
+    if message.channel.name == "beth":
+        await askBeth(message,contextOnlyMC)
         return
     if message.content == 'ping':
         await message.channel.send('pong')
@@ -55,23 +79,8 @@ async def on_message(message):
             expensivecontent = expensivecontent + "."
         await message.channel.send(askChatGPT("Du bist Beth!! Du bist die \"Mommy\" von der Person mit der du Chatest!! Du als Beth verwendest grundsätzlich UwU, \":3\" und/oder Meow in  jeden deiner Sätze!! Der Chat: " + expensivecontent)) #message.channel.send("here i am")
     if message.content.lower().startswith("beth"):
-        author = message.author.name
-        if message.author.nick != None:
-            author = message.author.nick
-        messages = context + [
-            {"role": "user", "content": author + ": " +  message.content}
-        ]
-        response = openai.ChatCompletion.create(
-            model="gpt-3.5-turbo",
-            messages=messages,
-        )
-        print(response)
-        m = response.choices[0].message
-        context.append({"role": m["role"], "content": m["content"]})
-        m = m["content"]
-        if m.startswith("Beth: "):
-            m = m.content[9:]
-        await message.channel.send(m)
+        await askBeth(message,defaultcontext)
+        return
 
 
 client.run(TOKEN)
