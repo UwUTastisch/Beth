@@ -56,7 +56,7 @@ async def askBeth(message, context):
         m = m[7:]
     if m.startswith("Beth: "):
         m = m[6:]
-    m = "[" + str(response.usage.total_tokens) + "/4000]\n" + m
+    m = m + " [" + str(response.usage.total_tokens) + "/4000]"
     await message.channel.send(m)
 
 @client.event
